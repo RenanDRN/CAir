@@ -14,7 +14,7 @@ typedef struct Voo
 } Voo;
 
 Voo *inicio = NULL;
-int qtdVoo = 0;
+int qtdVoo = 1;
 
 struct tm *obterDataHorainicio()
 {
@@ -39,12 +39,12 @@ void incluirVoo()
     printf("Digite o numero do portao: \n");
     scanf("%d", &voo->nPortao);
 
-    // int hora, minuto;
-    // printf("Digite a hora prevista de chegada (formato HH:MM): \n");
-    // scanf("%d:%d", &hora, &minuto);
+    int hora, minuto;
+    printf("Digite a hora prevista de chegada (formato HH:MM): \n");
+    scanf("%d:%d", &hora, &minuto);
     voo->horaDecolagem = obterDataHorainicio();
-    // voo->horaDecolagem->tm_hour = hora;
-    // voo->horaDecolagem->tm_min = minuto;
+    voo->horaDecolagem->tm_hour = hora;
+    voo->horaDecolagem->tm_min = minuto;
 
     printf("Digite o nome da companhia: \n");
     scanf("%19s", voo->companhia);
@@ -122,14 +122,20 @@ void exibirVoos()
     else
     {
         Voo *atual = inicio;
-        printf("\n|-------------- Painel de Voos CAir ---------------|\n");
-        printf("|  Horario | Destino | CIA | VOO | Portao | Status  |\n");
+        printf("\n|------------------------- Painel de Voos CAir --------------------------|\n");
+        printf("|  VOO  | Horario  |      Destino       |   CIA   | Portao |   Status    |\n");
+        printf("|------------------------------------------------------------------------|\n");
         while (atual != NULL)
         {
-            printf("| %02dh%02dm - %s - %s - %d - %d - %s |\n",
-                   atual->horaDecolagem->tm_hour, atual->horaDecolagem->tm_min, atual->destino,
-                   atual->companhia, atual->nVoo, atual->nPortao, atual->status);
-            printf("|--------------------------------------------------|\n");
+            printf("| %5d | %02dh%02dm   | %-18s | %-7s | %6d | %-11s |\n",
+                atual->nVoo,
+                atual->horaDecolagem->tm_hour,
+                atual->horaDecolagem->tm_min,
+                atual->destino,
+                atual->companhia,
+                atual->nPortao,
+                atual->status);
+            printf("|------------------------------------------------------------------------|\n");
 
             atual = atual->prox;
         }
