@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <stdbool.h>
 
 typedef struct Voo
 {
@@ -9,14 +8,23 @@ typedef struct Voo
     char companhia[20];
     char destino[80];
     int nPortao;
-    struct tm *horaDecolagem; // dá pra usar também uma struct com hora e minuto, ver o que prefere
+    struct tm *horaEmbarque;
     char status[15];
     struct Voo *prox;
 } Voo;
 
+// Inicializa os prototipos das funções para poderem ser usadas antes de serem definidas
+
+Voo *obterVoo();
+void exibirVoo(Voo *);
+
+// inicializa a lista encadeada de voos inicio como vazia e qtdVoo como 1 (qtdVoo = Numero de voos | Sistema auto incremental)
 Voo *inicio = NULL;
 int qtdVoo = 1;
 
+/// @brief
+///  Função para obter a data e hora atual, alocando memória para a estrutura tm
+/// @return Data e Hora atual
 struct tm *obterDataHorainicio()
 {
     time_t agora = time(NULL);
@@ -25,37 +33,75 @@ struct tm *obterDataHorainicio()
     return dataHorainicio;
 }
 
-void ordenaVoo(Voo voo)
+/// @brief
+///  Função auxiliar para ordenar os voos em ordem de chegada de embarque
+/// @return
+void ordenaVoo(Voo *voo)
 {
-    Voo *novo = malloc(sizeof(Voo));
-    *novo = voo;
-    novo->prox = NULL;
-
-    // Se a lista estiver vazia ou o novo voo deve ser o primeiro
-    if (inicio == NULL ||
-        (voo.horaDecolagem->tm_hour < inicio->horaDecolagem->tm_hour) ||
-        (voo.horaDecolagem->tm_hour == inicio->horaDecolagem->tm_hour && voo.horaDecolagem->tm_min < inicio->horaDecolagem->tm_min))
+    // Remove o voo da lista, se já estiver nela
+    if (inicio == voo)
     {
-        novo->prox = inicio;
-        inicio = novo;
+        inicio = voo->prox;
+    }
+    else
+    {
+        Voo *anterior = inicio;
+        while (anterior && anterior->prox != voo)
+        {
+            anterior = anterior->prox;
+        }
+        if (anterior && anterior->prox == voo)
+        {
+            anterior->prox = voo->prox;
+        }
+    }
+    voo->prox = NULL;
+
+    // Caso especial: lista vazia ou voo deve ser o primeiro
+    if (inicio == NULL ||
+        voo->horaEmbarque->tm_hour < inicio->horaEmbarque->tm_hour ||
+        (voo->horaEmbarque->tm_hour == inicio->horaEmbarque->tm_hour &&
+         voo->horaEmbarque->tm_min < inicio->horaEmbarque->tm_min))
+    {
+        voo->prox = inicio;
+        inicio = voo;
         return;
     }
 
+    // Busca a posição correta para inserir o voo
     Voo *atual = inicio;
-    while (atual->prox != NULL &&
-           (atual->prox->horaDecolagem->tm_hour < voo.horaDecolagem->tm_hour ||
-            (atual->prox->horaDecolagem->tm_hour == voo.horaDecolagem->tm_hour &&
-             atual->prox->horaDecolagem->tm_min < voo.horaDecolagem->tm_min)))
+
+    if (atual == NULL)
     {
+        voo->prox = inicio;
+        inicio = voo;
+        return;
+    }
+
+    while (atual->prox != NULL)
+    {
+        int h1 = atual->prox->horaEmbarque->tm_hour;
+        int m1 = atual->prox->horaEmbarque->tm_min;
+        int h2 = voo->horaEmbarque->tm_hour;
+        int m2 = voo->horaEmbarque->tm_min;
+
+        if (h1 > h2 || (h1 == h2 && m1 >= m2))
+        {
+            break;
+        }
         atual = atual->prox;
     }
 
-    novo->prox = atual->prox;
-    atual->prox = novo;
+    // Insere o voo na posição encontrada
+    voo->prox = atual->prox;
+    atual->prox = voo;
 }
 
+/// @brief
+///  Função auxiliar para incluir um novo voo na lista de voos ja ordenado por ordem de embarque.
 void incluirVoo()
 {
+    // Inicializacao da lista de voos com input do usuario
     Voo *voo = malloc(sizeof(Voo));
     if (voo == NULL)
     {
@@ -63,7 +109,7 @@ void incluirVoo()
     }
 
     voo->nVoo = qtdVoo;
-    printf("Digite o destino do voo: \n");
+    printf("Digite a sigla de destino: \n");
     scanf("%79s", voo->destino);
 
     printf("Digite o numero do portao: \n");
@@ -72,33 +118,28 @@ void incluirVoo()
     int hora, minuto;
     printf("Digite o horario de embarque (formato HH:MM): \n");
     scanf("%d:%d", &hora, &minuto);
-    voo->horaDecolagem = obterDataHorainicio();
-    voo->horaDecolagem->tm_hour = hora;
-    voo->horaDecolagem->tm_min = minuto;
+    voo->horaEmbarque = obterDataHorainicio();
+    voo->horaEmbarque->tm_hour = hora;
+    voo->horaEmbarque->tm_min = minuto;
 
-    printf("Digite o nome da companhia: \n");
+    printf("Digite a sigla da companhia: \n");
     scanf("%19s", voo->companhia);
 
     printf("Digite o status do voo: \n");
     scanf("%14s", voo->status);
 
     voo->prox = NULL;
-    // Se a lista estiver vazia, o novo voo é o primeiro
+    // Se a lista estiver vazia, o novo voo é o primeiro. Caso contrário, insere na posição correta
     if (inicio == NULL)
         inicio = voo;
     else
-    {
-        ordenaVoo(*voo);
-        // Voo *atual = inicio;
-        // while (atual->prox != NULL)
-        // {
-        //     atual = atual->prox; // Percorre até o final da lista
-        // }
-        // atual->prox = voo; // Adiciona o novo voo ao final da lista
-    }
+        ordenaVoo(voo);
     qtdVoo++;
 }
 
+/// @brief
+/// Função para obter um voo específico pelo ID.
+/// @return voo específico ou NULL se não encontrado.
 Voo *obterVoo()
 {
     int idVoo;
@@ -119,18 +160,24 @@ Voo *obterVoo()
     return NULL;
 }
 
+/// @brief
+/// Função para alterar os detalhes de um voo específico.
 void alterarDetalhes()
 {
     Voo *voo = obterVoo();
-
     int opcao = -1;
     while (opcao != 0)
     {
         system("cls || clear");
         printf("### Alterar Voo ###\n");
-        printf(" 0 - Voltar para menu anterior\n");
+
+        printf("|---------------------------### Alterar Voo ###---------------------------|\n");
+        exibirVoo(voo);
+        printf("|-------------------------------------------------------------------------|\n");
+
+        printf("\n 0 - Voltar para menu anterior\n");
         printf(" 1 - Alterar Status\n");
-        printf(" 2 - Alterar Horario de Decolagem\n");
+        printf(" 2 - Alterar Horario de Embarque\n");
         printf(" 3 - Alterar Numero do portao\n");
         printf(" 4 - Alterar Destino\n");
         printf(" Digite a opcao desejada:  ");
@@ -140,25 +187,31 @@ void alterarDetalhes()
         case 1:
             printf("Digite o novo status: ");
             scanf("%14s", voo->status);
+            opcao = 0;
             break;
+
         case 2:
-            printf("Digite a nova hora prevista de chegada (formato HH:MM): \n");
+            printf("Digite a nova hora prevista de Embarque (formato HH:MM): \n");
             int hora, minuto;
             scanf("%d:%d", &hora, &minuto);
-            voo->horaDecolagem->tm_hour = hora;
-            voo->horaDecolagem->tm_min = minuto;
-            // implementar a lógica para ordenar os voos por hora de decolagem
-            ordenaVoo(*voo);
+            voo->horaEmbarque->tm_hour = hora;
+            voo->horaEmbarque->tm_min = minuto;
+            ordenaVoo(voo);
+            opcao = 0;
             break;
 
         case 3:
             printf("Digite o novo numero do portao: ");
             scanf("%d", &voo->nPortao);
+            opcao = 0;
             break;
+
         case 4:
             printf("Digite o novo destino: ");
             scanf("%79s", voo->destino);
+            opcao = 0;
             break;
+
         case 0:
             opcao = 0;
             break;
@@ -168,33 +221,28 @@ void alterarDetalhes()
     }
 }
 
-void exibirVoos()
+/// @brief
+/// Função para exibir na tela do usuário detalhes de um voo.
+/// @param voo Voo especifico a ser exibido
+void exibirVoo(Voo *voo)
 {
-    if (inicio == NULL)
-        printf("#### Nao ha voos programados ####\n");
-    else
+    if (voo == NULL)
     {
-        Voo *atual = inicio;
-        printf("\n|------------------------- Painel de Voos CAir --------------------------|\n");
-        printf("|  VOO  | Horario  |      Destino       |   CIA   | Portao |   Status    |\n");
-        printf("|------------------------------------------------------------------------|\n");
-        while (atual != NULL)
-        {
-            printf("| %5d | %02dh%02dm   | %-18s | %-7s | %6d | %-11s |\n",
-                   atual->nVoo,
-                   atual->horaDecolagem->tm_hour,
-                   atual->horaDecolagem->tm_min,
-                   atual->destino,
-                   atual->companhia,
-                   atual->nPortao,
-                   atual->status);
-            printf("|------------------------------------------------------------------------|\n");
-
-            atual = atual->prox;
-        }
+        printf("Voo nao encontrado.\n");
+        return;
     }
+    printf("| %5d | %02dh%02dm   | %-18s | %-7s | %6d | %-11s  |\n",
+           voo->nVoo,
+           voo->horaEmbarque->tm_hour,
+           voo->horaEmbarque->tm_min,
+           voo->destino,
+           voo->companhia,
+           voo->nPortao,
+           voo->status);
 }
 
+/// @brief
+/// Função para excluir um voo específico da lista de voos.
 void excluirVoo()
 {
     Voo *voo = obterVoo();
@@ -219,11 +267,34 @@ void excluirVoo()
         anterior->prox = voo->prox;
     }
 
-    free(voo->horaDecolagem);
+    free(voo->horaEmbarque);
     free(voo);
     printf("Voo excluido com sucesso.\n");
 }
 
+/// @brief
+/// Função responsavel por exibir todos as informações do voos programados no painel.
+void exibirPainel()
+{
+    if (inicio == NULL)
+        printf("#### Nao ha voos programados ####\n");
+    else
+    {
+        Voo *atual = inicio;
+        printf("\n|------------------------- Painel de Voos CAir ---------------------------|\n");
+        printf("|  VOO  | Horario  |      Destino       |   CIA   | Portao |   Status     |\n");
+        printf("|-------------------------------------------------------------------------|\n");
+        while (atual != NULL)
+        {
+            exibirVoo(atual);
+            printf("|-------------------------------------------------------------------------|\n");
+            atual = atual->prox;
+        }
+    }
+}
+
+/// @brief
+///  Metodo principal do programa, que exibe o menu de opções e permite ao usuário interagir com o sistema de voos.
 int main(int argc, char const *argv[])
 {
     int opcao = -1;
@@ -231,7 +302,7 @@ int main(int argc, char const *argv[])
     while (opcao != 0)
     {
         system("cls || clear");
-        exibirVoos();
+        exibirPainel();
 
         printf("\n-------------- Menu de Opcoes --------------\n");
         printf(" 0 - Encerrar Painel\n");
@@ -258,6 +329,7 @@ int main(int argc, char const *argv[])
 
         case 0:
             opcao = 0;
+            printf("%s Obrigado por voar conosco!");
             break;
         }
     }

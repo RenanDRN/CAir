@@ -1,6 +1,14 @@
 # CAir
 
-A ideia do projeto é simular um controlador de painel de aeroporto utilizando listas encadeadas na linguagem C
+O CAir é um projeto acadêmico desenvolvido para simular um sistema de controle de painel de voos de aeroporto, utilizando listas encadeadas em linguagem C. O objetivo é proporcionar uma experiência prática de manipulação de estruturas de dados dinâmicas, permitindo o cadastro, alteração, exclusão e exibição de voos em tempo real, de forma semelhante ao funcionamento de um painel de aeroportos reais.
+
+## Funcionalidades
+
+- Cadastro de novos voos com informações completas (companhia, destino, portão, horário, status, etc.)
+- Alteração de dados de voos já cadastrados
+- Exclusão de voos da lista
+- Exibição de todos os voos programados em formato de painel
+- Ordenação automática dos voos por horário de embarque
 
 ## Integrantes
 
@@ -16,4 +24,26 @@ A ideia do projeto é simular um controlador de painel de aeroporto utilizando l
 
 ## Como rodar o projeto?
 
-Em construção...
+### Dependências
+
+- **Windows:** É necessário instalar o compilador GCC.  
+  [Veja como instalar](https://dev.to/gamegods3/how-to-install-gcc-in-windows-10-the-easier-way-422j)
+- **Linux:** O GCC já vem instalado na maioria das distribuições.
+
+### Compilando o projeto
+
+No terminal, execute:
+
+```shell
+gcc main.c -o main.exe
+```
+> Sempre recompile após alterações no código.
+
+### Executando o projeto
+
+No mesmo terminal e pasta do executável, rode:
+
+```shell
+./main.exe
+```
+> Certifique-se de estar no diretório correto ao executar o comando.
