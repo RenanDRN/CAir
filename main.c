@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 typedef struct Voo
 {
     int nVoo;
-    char companhia[20];
+    char companhia[40];
     char destino[80];
     int nPortao;
     struct tm *horaEmbarque;
-    char status[15];
+    char status[30];
     struct Voo *prox;
 } Voo;
 
@@ -97,6 +98,11 @@ void ordenaVoo(Voo *voo)
     atual->prox = voo;
 }
 
+void limparBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 /// @brief
 ///  Função auxiliar para incluir um novo voo na lista de voos ja ordenado por ordem de embarque.
 void incluirVoo()
@@ -109,24 +115,29 @@ void incluirVoo()
     }
 
     voo->nVoo = qtdVoo;
-    printf("Digite a sigla de destino: \n");
-    scanf("%79s", voo->destino);
+    printf("Digite o destino: \n");
+    fgets(voo->destino, sizeof(voo->destino), stdin);
+    voo->destino[strcspn(voo->destino, "\n")] = '\0';
 
     printf("Digite o numero do portao: \n");
     scanf("%d", &voo->nPortao);
+    limparBuffer();
 
     int hora, minuto;
     printf("Digite o horario de embarque (formato HH:MM): \n");
     scanf("%d:%d", &hora, &minuto);
+    limparBuffer();
     voo->horaEmbarque = obterDataHorainicio();
     voo->horaEmbarque->tm_hour = hora;
     voo->horaEmbarque->tm_min = minuto;
 
     printf("Digite a sigla da companhia: \n");
-    scanf("%19s", voo->companhia);
+    fgets(voo->companhia, sizeof(voo->companhia), stdin);
+    voo->companhia[strcspn(voo->companhia, "\n")] = '\0';
 
     printf("Digite o status do voo: \n");
-    scanf("%14s", voo->status);
+    fgets(voo->status, sizeof(voo->status), stdin);
+    voo->status[strcspn(voo->status, "\n")] = '\0';
 
     voo->prox = NULL;
     // Se a lista estiver vazia, o novo voo é o primeiro. Caso contrário, insere na posição correta
@@ -135,6 +146,7 @@ void incluirVoo()
     else
         ordenaVoo(voo);
     qtdVoo++;
+    limparBuffer();
 }
 
 /// @brief
@@ -171,22 +183,25 @@ void alterarDetalhes()
         system("cls || clear");
         printf("### Alterar Voo ###\n");
 
-        printf("|---------------------------### Alterar Voo ###---------------------------|\n");
+        printf("|--------------------------------------- ### Alterar Voo ### -----------------------------------------------------|\n");
         exibirVoo(voo);
-        printf("|-------------------------------------------------------------------------|\n");
+        printf("|-----------------------------------------------------------------------------------------------------------------|\n");
 
         printf("\n 0 - Voltar para menu anterior\n");
         printf(" 1 - Alterar Status\n");
         printf(" 2 - Alterar Horario de Embarque\n");
         printf(" 3 - Alterar Numero do portao\n");
         printf(" 4 - Alterar Destino\n");
+        printf(" 5 - Alterar Companhia\n");
         printf(" Digite a opcao desejada:  ");
         scanf("%d", &opcao);
+        limparBuffer();
         switch (opcao)
         {
         case 1:
             printf("Digite o novo status: ");
-            scanf("%14s", voo->status);
+            fgets(voo->status, sizeof(voo->status), stdin);
+            voo->status[strcspn(voo->status, "\n")] = '\0';
             opcao = 0;
             break;
 
@@ -194,6 +209,7 @@ void alterarDetalhes()
             printf("Digite a nova hora prevista de Embarque (formato HH:MM): \n");
             int hora, minuto;
             scanf("%d:%d", &hora, &minuto);
+            limparBuffer();
             voo->horaEmbarque->tm_hour = hora;
             voo->horaEmbarque->tm_min = minuto;
             ordenaVoo(voo);
@@ -203,12 +219,21 @@ void alterarDetalhes()
         case 3:
             printf("Digite o novo numero do portao: ");
             scanf("%d", &voo->nPortao);
+            limparBuffer();
             opcao = 0;
             break;
 
         case 4:
             printf("Digite o novo destino: ");
-            scanf("%79s", voo->destino);
+            fgets(voo->destino, sizeof(voo->destino), stdin);
+            voo->destino[strcspn(voo->destino, "\n")] = '\0';
+            opcao = 0;
+            break;
+
+        case 5:
+            printf("Digite a nova companhia: ");
+            fgets(voo->companhia, sizeof(voo->companhia), stdin);
+            voo->companhia[strcspn(voo->companhia, "\n")] = '\0';
             opcao = 0;
             break;
 
@@ -231,7 +256,7 @@ void exibirVoo(Voo *voo)
         printf("Voo nao encontrado.\n");
         return;
     }
-    printf("| %5d | %02dh%02dm   | %-18s | %-7s | %6d | %-11s  |\n",
+    printf("| %5d | %02dh%02dm   | %-26s | %-30s | %6d | %-20s  |\n",
            voo->nVoo,
            voo->horaEmbarque->tm_hour,
            voo->horaEmbarque->tm_min,
@@ -281,13 +306,13 @@ void exibirPainel()
     else
     {
         Voo *atual = inicio;
-        printf("\n|------------------------- Painel de Voos CAir ---------------------------|\n");
-        printf("|  VOO  | Horario  |      Destino       |   CIA   | Portao |   Status     |\n");
-        printf("|-------------------------------------------------------------------------|\n");
+        printf("\n|--------------------------------------- Painel de Voos CAir -----------------------------------------------------|\n");
+        printf("|  VOO  | Horario  |          Destino           |               CIA              | Portao |          Status       |\n");
+        printf("|-----------------------------------------------------------------------------------------------------------------|\n");
         while (atual != NULL)
         {
             exibirVoo(atual);
-            printf("|-------------------------------------------------------------------------|\n");
+            printf("|-----------------------------------------------------------------------------------------------------------------|\n");
             atual = atual->prox;
         }
     }
@@ -311,6 +336,7 @@ int main(int argc, char const *argv[])
         printf(" 3 - Excluir Voo\n");
         printf(" Digite a opcao desejada:  ");
         scanf("%d", &opcao);
+        limparBuffer();
         system("cls || clear");
         switch (opcao)
         {
@@ -329,7 +355,7 @@ int main(int argc, char const *argv[])
 
         case 0:
             opcao = 0;
-            printf("%s Obrigado por voar conosco!");
+            printf("Obrigado por voar conosco!\n");
             break;
         }
     }
