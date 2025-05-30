@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <ctype.h>
 
 typedef struct Voo
 {
@@ -131,13 +132,61 @@ void incluirVoo()
     voo->horaEmbarque->tm_hour = hora;
     voo->horaEmbarque->tm_min = minuto;
 
-    printf("Digite a sigla da companhia: \n");
+    printf("Digite o nome da companhia: \n");
     fgets(voo->companhia, sizeof(voo->companhia), stdin);
     voo->companhia[strcspn(voo->companhia, "\n")] = '\0';
 
-    printf("Digite o status do voo: \n");
-    fgets(voo->status, sizeof(voo->status), stdin);
-    voo->status[strcspn(voo->status, "\n")] = '\0';
+    printf("Indique o status do voo: \n");
+	printf(" 1 - PREVISTO\n");
+	printf(" 2 - EM SOLO\n");
+	printf(" 3 - EMBARQUE\n");
+	printf(" 4 - ATRASADO\n");
+	printf(" 5 - DECOLADO\n");
+	printf(" 6 - CANCELADO\n");
+
+	int opcao = -1;
+	scanf("%d", &opcao);
+    limparBuffer();
+
+	switch (opcao)
+	{
+	case 1:
+		strcpy(voo->status, "PREVISTO");
+		opcao = 0;
+		break;
+
+	case 2:
+		strcpy(voo->status, "EM SOLO");
+		opcao = 0;
+		break;
+
+	case 3:
+		strcpy(voo->status, "EMBARQUE");
+		opcao = 0;
+		break;
+
+	case 4:
+		strcpy(voo->status, "ATRASADO");
+		opcao = 0;
+		break;
+
+	case 5:
+		strcpy(voo->status, "DECOLANDO");
+		opcao = 0;
+		break;
+
+	case 6:
+		strcpy(voo->status, "CANCELADO");
+		opcao = 0;
+		break;
+
+	case 0:
+		opcao = 0;
+		break;
+
+	default:
+		break;
+	}
 
     voo->prox = NULL;
     // Se a lista estiver vazia, o novo voo é o primeiro. Caso contrário, insere na posição correta
@@ -199,9 +248,57 @@ void alterarDetalhes()
         switch (opcao)
         {
         case 1:
-            printf("Digite o novo status: ");
-            fgets(voo->status, sizeof(voo->status), stdin);
-            voo->status[strcspn(voo->status, "\n")] = '\0';
+            printf("Indique o status do voo: \n");
+            printf(" 1 - PREVISTO\n");
+            printf(" 2 - EM SOLO\n");
+            printf(" 3 - EMBARQUE\n");
+            printf(" 4 - ATRASADO\n");
+            printf(" 5 - DECOLANDO\n");
+            printf(" 6 - CANCELADO\n");
+        
+            int opcao = -1;
+            scanf("%d", &opcao);
+            limparBuffer();
+        
+            switch (opcao)
+            {
+            case 1:
+                strcpy(voo->status, "PREVISTO");
+                opcao = 0;
+                break;
+        
+            case 2:
+                strcpy(voo->status, "EM SOLO");
+                opcao = 0;
+                break;
+        
+            case 3:
+                strcpy(voo->status, "EMBARQUE");
+                opcao = 0;
+                break;
+        
+            case 4:
+                strcpy(voo->status, "ATRASADO");
+                opcao = 0;
+                break;
+        
+            case 5:
+                strcpy(voo->status, "DECOLANDO");
+                opcao = 0;
+                break;
+        
+            case 6:
+                strcpy(voo->status, "CANCELADO");
+                opcao = 0;
+                break;
+        
+            case 0:
+                opcao = 0;
+                break;
+        
+            default:
+                break;
+            }
             opcao = 0;
             break;
 
@@ -320,7 +417,7 @@ void exibirPainel()
 
 /// @brief
 ///  Metodo principal do programa, que exibe o menu de opções e permite ao usuário interagir com o sistema de voos.
-int main(int argc, char const *argv[])
+int main(void)
 {
     int opcao = -1;
     printf("## Bem-vindo ao Painel de Voos CAir! ##\n");
