@@ -115,9 +115,25 @@ void incluirVoo()
     }
 
     char buffer[20];
-    printf("Digite o ID do voo: \n");
-    fgets(buffer, sizeof(buffer), stdin);
-    voo->nVoo = atoi(buffer);
+    int idValido = 0;
+    while (!idValido) {
+        printf("Digite o ID do voo: \n");
+        scanf("%d", &voo->nVoo);
+        limparBuffer();
+
+        // Verifica se já existe um voo com esse ID
+        Voo *atual = inicio;
+        idValido = 1;
+        while (atual != NULL) {
+            if (atual->nVoo == voo->nVoo) {
+                system("cls || clear");
+                printf("Voo %d ja existente!\n", voo->nVoo);
+                idValido = 0;
+                break;
+            }
+            atual = atual->prox;
+        }
+    }
 
     printf("Digite o destino: \n");
     fgets(voo->destino, sizeof(voo->destino), stdin);
@@ -219,7 +235,7 @@ Voo *obterVoo()
         atual = atual->prox;
     }
     // Se o voo não for encontrado, exibe uma mensagem
-    printf("Voo com ID %d nao encontrado.\n", idVoo);
+    // printf("Voo com ID %d nao encontrado.\n", idVoo);
     return NULL;
 }
 
