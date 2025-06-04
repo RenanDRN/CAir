@@ -20,9 +20,8 @@ typedef struct Voo
 Voo *obterVoo();
 void exibirVoo(Voo *);
 
-// inicializa a lista encadeada de voos inicio como vazia e qtdVoo como 1 (qtdVoo = Numero de voos | Sistema auto incremental)
+// inicializa a lista encadeada de voos inicio como vazia
 Voo *inicio = NULL;
-int qtdVoo = 1;
 
 /// @brief
 ///  Função para obter a data e hora atual, alocando memória para a estrutura tm
@@ -115,7 +114,27 @@ void incluirVoo()
         printf("Erro ao alocar memória para o voo.\n");
     }
 
-    voo->nVoo = qtdVoo;
+    char buffer[20];
+    int idValido = 0;
+    while (!idValido) {
+        printf("Digite o ID do voo: \n");
+        scanf("%d", &voo->nVoo);
+        limparBuffer();
+
+        // Verifica se já existe um voo com esse ID
+        Voo *atual = inicio;
+        idValido = 1;
+        while (atual != NULL) {
+            if (atual->nVoo == voo->nVoo) {
+                system("cls || clear");
+                printf("Voo %d ja existente!\n", voo->nVoo);
+                idValido = 0;
+                break;
+            }
+            atual = atual->prox;
+        }
+    }
+
     printf("Digite o destino: \n");
     fgets(voo->destino, sizeof(voo->destino), stdin);
     voo->destino[strcspn(voo->destino, "\n")] = '\0';
@@ -194,7 +213,6 @@ void incluirVoo()
         inicio = voo;
     else
         ordenaVoo(voo);
-    qtdVoo++;
     limparBuffer();
 }
 
@@ -217,7 +235,7 @@ Voo *obterVoo()
         atual = atual->prox;
     }
     // Se o voo não for encontrado, exibe uma mensagem
-    printf("Voo com ID %d nao encontrado.\n", idVoo);
+    // printf("Voo com ID %d nao encontrado.\n", idVoo);
     return NULL;
 }
 
@@ -248,6 +266,7 @@ void alterarDetalhes()
         switch (opcao)
         {
         case 1:
+            system("cls || clear");
             printf("Indique o status do voo: \n");
             printf(" 1 - PREVISTO\n");
             printf(" 2 - EM SOLO\n");
