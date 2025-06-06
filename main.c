@@ -114,10 +114,9 @@ void incluirVoo()
         printf("Erro ao alocar memória para o voo.\n");
     }
 
-    char buffer[20];
     int idValido = 0;
     while (!idValido) {
-        printf("Digite o ID do voo: \n");
+        printf("\033[1;36mDigite o ID do voo: \033[0m\n");
         scanf("%d", &voo->nVoo);
         limparBuffer();
 
@@ -135,33 +134,35 @@ void incluirVoo()
         }
     }
 
-    printf("Digite o destino: \n");
-    fgets(voo->destino, sizeof(voo->destino), stdin);
-    voo->destino[strcspn(voo->destino, "\n")] = '\0';
+    printf("\n\033[1;36mDigite o destino: \033[0m\n");
+    gets(voo->destino);
+    /*fgets(voo->destino, sizeof(voo->destino), stdin);
+    voo->destino[strcspn(voo->destino, "\n")] = '\0';*/
 
-    printf("Digite o numero do portao: \n");
+    printf("\n\033[1;36mDigite o numero do portao: \033[0m\n");
     scanf("%d", &voo->nPortao);
     limparBuffer();
 
     int hora, minuto;
-    printf("Digite o horario de embarque (formato HH:MM): \n");
+    printf("\n\033[1;36mDigite o horario de embarque (formato HH:MM): \033[0m\n");
     scanf("%d:%d", &hora, &minuto);
     limparBuffer();
     voo->horaEmbarque = obterDataHorainicio();
     voo->horaEmbarque->tm_hour = hora;
     voo->horaEmbarque->tm_min = minuto;
 
-    printf("Digite o nome da companhia: \n");
-    fgets(voo->companhia, sizeof(voo->companhia), stdin);
-    voo->companhia[strcspn(voo->companhia, "\n")] = '\0';
+    printf("\n\033[1;36mDigite o nome da companhia: \033[0m\n");
+    gets(voo->companhia);
+    /*fgets(voo->companhia, sizeof(voo->companhia), stdin);
+    voo->companhia[strcspn(voo->companhia, "\n")] = '\0';*/
 
-    printf("Indique o status do voo: \n");
-	printf(" 1 - PREVISTO\n");
-	printf(" 2 - EM SOLO\n");
-	printf(" 3 - EMBARQUE\n");
-	printf(" 4 - ATRASADO\n");
-	printf(" 5 - DECOLADO\n");
-	printf(" 6 - CANCELADO\n");
+    printf("\n\033[1;36mIndique o status do voo: \033[0m\n");
+	printf("\033[1;36m 1 -\033[0m \033[1;0mPREVISTO\033[0m\n");
+	printf("\033[1;36m 2 -\033[0m \033[1;34mEM SOLO\033[0m\n");
+	printf("\033[1;36m 3 -\033[0m \033[1;32mEMBARQUE\033[0m\n");
+	printf("\033[1;36m 4 -\033[0m \033[1;33mATRASADO\033[0m\n");
+	printf("\033[1;36m 5 -\033[0m \033[1;35mDECOLADO\033[0m\n");
+	printf("\033[1;36m 6 -\033[0m \033[1;31mCANCELADO\033[0m\n");
 
 	int opcao = -1;
 	scanf("%d", &opcao);
@@ -190,7 +191,7 @@ void incluirVoo()
 		break;
 
 	case 5:
-		strcpy(voo->status, "DECOLANDO");
+		strcpy(voo->status, "DECOLADO");
 		opcao = 0;
 		break;
 
@@ -222,7 +223,8 @@ void incluirVoo()
 Voo *obterVoo()
 {
     int idVoo;
-    printf("Digite o ID do voo: ");
+    exibirPainel();
+    printf("\033[1;36mDigite o ID do voo: \033[0m");
     scanf("%d", &idVoo);
 
     Voo *atual = inicio;
@@ -248,32 +250,31 @@ void alterarDetalhes()
     while (opcao != 0)
     {
         system("cls || clear");
-        printf("### Alterar Voo ###\n");
 
-        printf("|--------------------------------------- ### Alterar Voo ### -----------------------------------------------------|\n");
+        printf("|--------------------------------------- \033[1;32m### Alterar Voo ###\033[0m -----------------------------------------------------|\n");
         exibirVoo(voo);
         printf("|-----------------------------------------------------------------------------------------------------------------|\n");
 
-        printf("\n 0 - Voltar para menu anterior\n");
+        printf("\n \033[1;36m0 - Voltar para menu anterior\n");
         printf(" 1 - Alterar Status\n");
         printf(" 2 - Alterar Horario de Embarque\n");
         printf(" 3 - Alterar Numero do portao\n");
         printf(" 4 - Alterar Destino\n");
-        printf(" 5 - Alterar Companhia\n");
-        printf(" Digite a opcao desejada:  ");
+        printf(" 5 - Alterar Companhia\033[0m\n");
+        printf(" \033[1;33mDigite a opcao desejada:  \033[0m");
         scanf("%d", &opcao);
         limparBuffer();
         switch (opcao)
         {
         case 1:
             system("cls || clear");
-            printf("Indique o status do voo: \n");
-            printf(" 1 - PREVISTO\n");
-            printf(" 2 - EM SOLO\n");
-            printf(" 3 - EMBARQUE\n");
-            printf(" 4 - ATRASADO\n");
-            printf(" 5 - DECOLANDO\n");
-            printf(" 6 - CANCELADO\n");
+            printf("\033[1;36mIndique o status do voo: \033[0m\n");
+            printf("\033[1;36m 1 -\033[0m \033[1;0mPREVISTO\033[0m\n");
+            printf("\033[1;36m 2 -\033[0m \033[1;34mEM SOLO\033[0m\n");
+            printf("\033[1;36m 3 -\033[0m \033[1;32mEMBARQUE\033[0m\n");
+            printf("\033[1;36m 4 -\033[0m \033[1;33mATRASADO\033[0m\n");
+            printf("\033[1;36m 5 -\033[0m \033[1;35mDECOLADO\033[0m\n");
+            printf("\033[1;36m 6 -\033[0m \033[1;31mCANCELADO\033[0m\n");
         
             int opcao = -1;
             scanf("%d", &opcao);
@@ -302,7 +303,7 @@ void alterarDetalhes()
                 break;
         
             case 5:
-                strcpy(voo->status, "DECOLANDO");
+                strcpy(voo->status, "DECOLADO");
                 opcao = 0;
                 break;
         
@@ -322,7 +323,8 @@ void alterarDetalhes()
             break;
 
         case 2:
-            printf("Digite a nova hora prevista de Embarque (formato HH:MM): \n");
+            system("cls || clear");
+            printf("\033[1;36mDigite a nova hora prevista de Embarque (formato HH:MM): \033[0m\n");
             int hora, minuto;
             scanf("%d:%d", &hora, &minuto);
             limparBuffer();
@@ -333,23 +335,28 @@ void alterarDetalhes()
             break;
 
         case 3:
-            printf("Digite o novo numero do portao: ");
+            system("cls || clear");
+            printf("\033[1;36mDigite o novo numero do portao: \033[0m");
             scanf("%d", &voo->nPortao);
             limparBuffer();
             opcao = 0;
             break;
 
         case 4:
-            printf("Digite o novo destino: ");
-            fgets(voo->destino, sizeof(voo->destino), stdin);
-            voo->destino[strcspn(voo->destino, "\n")] = '\0';
+            system("cls || clear");
+            printf("\033[1;36mDigite o novo destino: \033[0m");
+            gets(voo->destino);
+            /*fgets(voo->destino, sizeof(voo->destino), stdin);
+            voo->destino[strcspn(voo->destino, "\n")] = '\0';*/
             opcao = 0;
             break;
 
         case 5:
-            printf("Digite a nova companhia: ");
-            fgets(voo->companhia, sizeof(voo->companhia), stdin);
-            voo->companhia[strcspn(voo->companhia, "\n")] = '\0';
+            system("cls || clear");
+            printf("\033[1;36mDigite a nova companhia: \033[0m");
+            gets(voo->companhia);
+            /*fgets(voo->companhia, sizeof(voo->companhia), stdin);
+            voo->companhia[strcspn(voo->companhia, "\n")] = '\0';*/
             opcao = 0;
             break;
 
@@ -369,17 +376,35 @@ void exibirVoo(Voo *voo)
 {
     if (voo == NULL)
     {
-        printf("Voo nao encontrado.\n");
+        printf("\033[1;33mVoo nao encontrado.\033[0m\n");
         return;
     }
-    printf("| %5d | %02dh%02dm   | %-26s | %-30s | %6d | %-20s  |\n",
-           voo->nVoo,
-           voo->horaEmbarque->tm_hour,
-           voo->horaEmbarque->tm_min,
-           voo->destino,
-           voo->companhia,
-           voo->nPortao,
-           voo->status);
+
+    // Determina cor do status
+    char *corStatus;
+    if (strcmp(voo->status, "PREVISTO") == 0)
+        corStatus = "\033[1;0m"; // padrão
+    else if (strcmp(voo->status, "EM SOLO") == 0)
+        corStatus = "\033[1;34m"; // azul
+    else if (strcmp(voo->status, "EMBARQUE") == 0)
+        corStatus = "\033[1;32m"; // verde
+    else if (strcmp(voo->status, "ATRASADO") == 0)
+        corStatus = "\033[1;33m"; // amarelo
+    else if (strcmp(voo->status, "DECOLADO") == 0)
+        corStatus = "\033[1;35m"; // magenta
+    else if (strcmp(voo->status, "CANCELADO") == 0)
+        corStatus = "\033[1;31m"; // vermelho
+    else
+        corStatus = "\033[0m"; // fallback padrão
+
+    printf("| \033[1;0m%5d\033[0m | \033[1;0m%02dh%02dm\033[0m   | \033[1;0m%-26s\033[0m | \033[1;0m%-30s\033[0m | \033[1;0m%6d\033[0m | %s%-21s\033[0m |\n",
+        voo->nVoo,
+        voo->horaEmbarque->tm_hour,
+        voo->horaEmbarque->tm_min,
+        voo->destino,
+        voo->companhia,
+        voo->nPortao,
+        corStatus, voo->status);
 }
 
 /// @brief
@@ -389,7 +414,7 @@ void excluirVoo()
     Voo *voo = obterVoo();
     if (voo == NULL)
     {
-        printf("Voo nao encontrado.\n");
+        printf("\033[1;33mVoo nao encontrado.\033[0m\n");
         return;
     }
 
@@ -410,7 +435,7 @@ void excluirVoo()
 
     free(voo->horaEmbarque);
     free(voo);
-    printf("Voo excluido com sucesso.\n");
+    printf("\033[1;33mVoo excluido com sucesso.\033[0m\n");
 }
 
 /// @brief
@@ -418,12 +443,12 @@ void excluirVoo()
 void exibirPainel()
 {
     if (inicio == NULL)
-        printf("#### Nao ha voos programados ####\n");
+        printf("\033[1;33m#### Nao ha voos programados ####\033[0m\n");
     else
     {
         Voo *atual = inicio;
-        printf("\n|--------------------------------------- Painel de Voos CAir -----------------------------------------------------|\n");
-        printf("|  VOO  | Horario  |          Destino           |               CIA              | Portao |          Status       |\n");
+        printf("\n|------------------------------------------ \033[1;32mPAINEL DE VOOS | CAir\033[0m ------------------------------------------------|\n");
+        printf("|  \033[1;33mVOO\033[0m  | \033[1;33mHorario\033[0m  |          \033[1;33mDestino\033[0m           |               \033[1;33mCIA\033[0m              | \033[1;33mPortao\033[0m |          \033[1;33mStatus\033[0m       |\n");
         printf("|-----------------------------------------------------------------------------------------------------------------|\n");
         while (atual != NULL)
         {
@@ -439,18 +464,18 @@ void exibirPainel()
 int main(void)
 {
     int opcao = -1;
-    printf("## Bem-vindo ao Painel de Voos CAir! ##\n");
+    printf("\033[1;36m## Bem-vindo ao Painel de Voos CAir! ##\033[0m\n");
     while (opcao != 0)
     {
         system("cls || clear");
         exibirPainel();
 
-        printf("\n-------------- Menu de Opcoes --------------\n");
-        printf(" 0 - Encerrar Painel\n");
+        printf("\n-------------- \033[1;36mMenu de Opcoes\033[0m --------------\n");
+        printf(" \033[1;36m0 - Encerrar Painel\n");
         printf(" 1 - Incluir Voo\n");
         printf(" 2 - Alterar Voo\n");
-        printf(" 3 - Excluir Voo\n");
-        printf(" Digite a opcao desejada:  ");
+        printf(" 3 - Excluir Voo\033[0m\n");
+        printf(" \033[1;33mDigite a opcao desejada:  \033[0m");
         scanf("%d", &opcao);
         limparBuffer();
         system("cls || clear");
@@ -471,7 +496,7 @@ int main(void)
 
         case 0:
             opcao = 0;
-            printf("Obrigado por voar conosco!\n");
+            printf("\033[1;33mObrigado por voar conosco!\033[0m\n\n");
             break;
         }
     }
